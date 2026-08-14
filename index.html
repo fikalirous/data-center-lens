@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Cloud's Footprint — Data Centers, Ecology &amp; the Digital Economy</title>
+<meta name="description" content="An interactive map comparing the world's data center infrastructure against each nation's ecological footprint, biocapacity, and digital economy." />
+<style>
+  :root {
+    --bg: #f7f7f9;
+    --bg-card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #55586b;
+    --border: #e2e2e8;
+    --accent: #4e79a7;
+    --accent-2: #e15759;
+    --accent-3: #ff9800;
+    --code-bg: #f0f0f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14141c;
+      --bg-card: #1c1c28;
+      --text: #eceaf2;
+      --text-muted: #a5a5b8;
+      --border: #303040;
+      --code-bg: #24242f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+  header.hero {
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  header.hero h1 {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  header.hero p.tagline {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 640px;
+    margin: 0;
+  }
+  section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2 {
+    font-size: 1.5rem;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+  }
+  h3 { font-size: 1.05rem; margin: 32px 0 8px; }
+  p { color: var(--text-muted); max-width: 700px; }
+  .lens-legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 24px 0 8px;
+  }
+  .lens-legend .chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .dot.l1 { background: var(--accent); }
+  .dot.l2 { background: var(--accent-2); }
+  .dot.l3 { background: var(--accent-3); }
+
+  .embed-frame {
+    width: 100%;
+    height: 640px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-card);
+  }
+  .embed-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .embed-actions { margin-top: 12px; display: flex; gap: 16px; font-size: 0.9rem; }
+  .embed-actions a { color: var(--accent); text-decoration: none; }
+  .embed-actions a:hover { text-decoration: underline; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 8px;
+    font-size: 0.92rem;
+  }
+  caption {
+    text-align: left;
+    font-weight: 600;
+    padding: 8px 0;
+    color: var(--text);
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  td.col-name code, .col-name code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+  ul.sources { list-style: none; padding: 0; margin: 12px 0; }
+  ul.sources li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  ul.sources li:last-child { border-bottom: none; }
+  ul.sources a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  ul.sources a:hover { text-decoration: underline; }
+  ul.sources .used-for { display: block; font-size: 0.85em; margin-top: 2px; }
+
+  footer { padding: 32px 0 64px; color: var(--text-muted); font-size: 0.85rem; }
+  footer a { color: var(--text-muted); }
+
+  .note {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>The Cloud's Footprint</h1>
+    <p class="tagline">Mapping the world's data center infrastructure against each nation's ecological footprint, biocapacity, and digital economy.</p>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <h2>About this project</h2>
+    <p>
+      This project maps where the internet's physical infrastructure — data centers and internet exchange
+      points — actually sits, and asks a harder question: what does hosting that infrastructure cost the
+      planet, and who is positioned to benefit from it? Every country in this dataset carries three angles:
+      how much digital infrastructure it hosts, whether its ecological footprint outstrips what its own land
+      and sea can regenerate, and how developed its digital economy is. The interactive map below lets you
+      explore all three at once.
+    </p>
+    <h3>How it works</h3>
+    <p>
+      Drag any of the three lens circles across the map. Each lens aggregates the data points beneath it
+      live into a bar chart. Overlap two or three lenses on the same region to compare all three angles for
+      one place at once.
+    </p>
+    <div class="lens-legend">
+      <span class="chip"><span class="dot l1"></span>Lens 1 — Infrastructure</span>
+      <span class="chip"><span class="dot l2"></span>Lens 2 — Resource Balance</span>
+      <span class="chip"><span class="dot l3"></span>Lens 3 — Digital Economy</span>
+    </div>
+  </div>
+</section>
+
+<section id="visual">
+  <div class="wrap">
+    <h2>Explore the map</h2>
+    <div class="embed-frame">
+      <iframe src="visual/index.html" title="The Cloud's Footprint — interactive visualization" loading="lazy"></iframe>
+    </div>
+    <div class="embed-actions">
+      <a href="visual/index.html" target="_blank" rel="noopener">Open fullscreen ↗</a>
+    </div>
+  </div>
+</section>
+
+<section id="data-dictionary">
+  <div class="wrap">
+    <h2>Data dictionary</h2>
+    <p>What each lens measures, and where the numbers come from.</p>
+
+    <table>
+      <caption><span class="dot l1"></span> Lens 1 — Infrastructure</caption>
+      <thead>
+        <tr><th>Label</th><th>Column</th><th>Description</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data Centers</td><td class="col-name"><code>data_centers</code></td><td>Number of PeeringDB-registered data center facilities in the country.</td><td>World Bank Data360 (PeeringDB)</td></tr>
+        <tr><td>Networks</td><td class="col-name"><code>total_networks</code></td><td>Sum of networks (ASNs) present across all data center facilities in the country — a proxy for interconnection density.</td><td>PeeringDB API</td></tr>
+        <tr><td>Exchanges</td><td class="col-name"><code>total_ix</code></td><td>Sum of internet exchange points present across all data center facilities in the country.</td><td>PeeringDB API</td></tr>
+      </tbody>
+    </table>
+
+    <table>
+      <caption><span class="dot l2"></span> Lens 2 — Resource Balance</caption>
+      <thead>
+        <tr><th>Label</th><th>Column</th><th>Description</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Footprint</td><td class="col-name"><code>footprint_total_earths</code></td><td>Per-capita ecological footprint — how many Earths it would take if everyone consumed like this country's average resident.</td><td>Global Footprint Network</td></tr>
+        <tr><td>Biocapacity</td><td class="col-name"><code>biocap_total_earths</code></td><td>Per-capita biocapacity — how many Earths' worth of biologically productive land and sea the country provides per resident, expressed in the same unit as Footprint.</td><td>Global Footprint Network (converted to per-capita "Earths")</td></tr>
+        <tr><td>Balance</td><td class="col-name"><code>ecological_balance_earths</code></td><td>Biocapacity minus Footprint. Positive means the country regenerates more than it consumes (reserve); negative means it consumes more than it regenerates (deficit).</td><td>Derived</td></tr>
+      </tbody>
+    </table>
+
+    <table>
+      <caption><span class="dot l3"></span> Lens 3 — Digital Economy</caption>
+      <thead>
+        <tr><th>Label</th><th>Column</th><th>Description</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GDP/Capita</td><td class="col-name"><code>gdp_per_capita_usd</code></td><td>Gross domestic product per person, current US$.</td><td>World Bank (WDI, <code>NY.GDP.PCAP.CD</code>)</td></tr>
+        <tr><td>Internet %</td><td class="col-name"><code>internet_users_pct</code></td><td>Share of the population using the internet.</td><td>World Bank (WDI, <code>IT.NET.USER.ZS</code>)</td></tr>
+        <tr><td>Mobile/100</td><td class="col-name"><code>mobile_subs_per100</code></td><td>Mobile cellular subscriptions per 100 people.</td><td>World Bank (WDI, <code>IT.CEL.SETS.P2</code>)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      The underlying dataset also carries population, urbanisation, and per-category footprint/biocapacity
+      breakdowns (cropland, grazing land, forest products, fishing grounds, built-up land) not currently
+      wired into a lens. Full file: <a href="data/country_level_dataset.csv">data/country_level_dataset.csv</a>.
+    </div>
+  </div>
+</section>
+
+<section id="sources">
+  <div class="wrap">
+    <h2>Sources &amp; credits</h2>
+    <ul class="sources">
+      <li>
+        <a href="https://data360.worldbank.org/en/dataset/PEERING_DB" target="_blank" rel="noopener">World Bank Data360 — Interconnection Database (PeeringDB)</a>
+        <span class="used-for">Data center counts per country.</span>
+      </li>
+      <li>
+        <a href="https://www.peeringdb.com/" target="_blank" rel="noopener">PeeringDB</a>
+        <span class="used-for">Facility-level network and internet-exchange counts, aggregated to country totals.</span>
+      </li>
+      <li>
+        <a href="https://data.worldbank.org/indicator" target="_blank" rel="noopener">World Bank — World Development Indicators</a>
+        <span class="used-for">GDP per capita, internet use, mobile subscriptions, population, urbanisation.</span>
+      </li>
+      <li>
+        <a href="https://data.footprintnetwork.org/" target="_blank" rel="noopener">Global Footprint Network</a>
+        <span class="used-for">Ecological footprint (demand) and biocapacity (supply) by country.</span>
+      </li>
+      <li>
+        <a href="https://github.com/mledoze/countries" target="_blank" rel="noopener">mledoze/countries</a>
+        <span class="used-for">Country ISO codes and centroid coordinates (MIT licensed).</span>
+      </li>
+      <li>
+        <a href="https://visquill.com/" target="_blank" rel="noopener">VisQuill Lens</a>
+        <span class="used-for">Interactive visualization engine used to build the map above.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Built with <a href="https://visquill.com/" target="_blank" rel="noopener">VisQuill Lens</a>. Data center, ecological, and economic figures are aggregated country-level statistics from the sources above — see each source for its own terms of use.</p>
+  </div>
+</footer>
+
+</body>
+</html>

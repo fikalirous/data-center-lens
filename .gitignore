@@ -1,0 +1,17 @@
+# Raw third-party exports kept local — see README "Data sources & licensing"
+data/peeringdb_facilities.csv
+data/Ecological_footprint_Compare_Countries.csv
+data/Biocapacity_Compare_Countries.csv
+Ecological_footprint_Compare_Countries.csv
+Biocapacity_Compare_Countries.csv
+peeringdb_facilities.csv
+
+# Scratch / working files not part of the published site
+pic_*.png
+visquill-export.zip
+visquill-ai-prompt.txt
+
+# Local tooling
+.claude/
+__pycache__/
+*.pyc
