@@ -2,7 +2,7 @@
 
 Mapping the world's data center infrastructure against each nation's ecological footprint, biocapacity, and digital economy.
 
-**[Open the live site →](https://YOUR-GITHUB-USERNAME.github.io/data-center-lens/)** *(update this link once GitHub Pages is enabled — see below)*
+**[Open the live site →](https://fikalirous.github.io/data-center-lens/)**
 
 Built with [VisQuill Lens](https://visquill.com/) — drag up to three lens circles across the map and each aggregates the data beneath it live into a bar chart.
 
