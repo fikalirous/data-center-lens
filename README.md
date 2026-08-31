@@ -4,7 +4,7 @@ Mapping the world's data center infrastructure against the carbon, water, and la
 
 **[Open the live site →](https://fikalirous.github.io/data-center-lens/)**
 
-Built with [VisQuill Lens](https://visquill.com/) — drag up to three lens circles across the map and each aggregates the data beneath it live into a bar chart of data centers, networks, and internet exchange points.
+Built with [VisQuill Lens](https://visquill.com/) — drag the lens across the map and it aggregates the data beneath it live into a bar chart of data centers, networks, and internet exchange points.
 
 ## About
 
@@ -12,7 +12,7 @@ In 2025, the world's data centers consumed an estimated 448 TWh of electricity �
 
 | View | What it shows |
 |---|---|
-| **Infrastructure lens** (interactive) | Data centers, networks, and exchange points per country — drag up to 3 lenses to compare regions |
+| **Infrastructure lens** (interactive) | Data centers, networks, and exchange points per country — drag the lens to explore regions |
 | **Electricity footprint map** | Carbon/water/land footprint intensity of major data center hub countries, relative to the global average — quoted directly from UNU-INWEH (2026) |
 
 ## Data dictionary
