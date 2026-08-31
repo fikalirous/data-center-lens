@@ -10,11 +10,6 @@ Built with [VisQuill Lens](https://visquill.com/) — drag up to three lens circ
 
 In 2025, the world's data centers consumed an estimated 448 TWh of electricity — enough that if data centers were a country, they'd rank 11th globally. AI workloads alone accounted for roughly a fifth of that, projected to double by 2030. But the environmental cost of that electricity isn't uniform: it depends entirely on each country's electricity mix, and "low-carbon" doesn't automatically mean "low-water" or "low-land." This project pairs two views:
 
-| View | What it shows |
-|---|---|
-| **Infrastructure lens** (interactive) | Data centers, networks, and exchange points per country — drag up to 3 lenses to compare regions |
-| **Electricity footprint map** | Carbon/water/land footprint intensity of major data center hub countries, relative to the global average — quoted directly from UNU-INWEH (2026) |
-
 ## Data dictionary
 
 **Infrastructure lens:**
