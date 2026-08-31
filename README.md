@@ -1,36 +1,33 @@
 # The Cloud's Footprint
 
-Mapping the world's data center infrastructure against each nation's ecological footprint, biocapacity, and digital economy.
+Mapping the world's data center infrastructure against the carbon, water, and land footprints of the electricity that powers it — grounded in [UNU-INWEH's 2026 global assessment of AI's environmental cost](https://doi.org/10.53328/INR26RMA002).
 
 **[Open the live site →](https://fikalirous.github.io/data-center-lens/)**
 
-Built with [VisQuill Lens](https://visquill.com/) — drag up to three lens circles across the map and each aggregates the data beneath it live into a bar chart.
+Built with [VisQuill Lens](https://visquill.com/) — drag up to three lens circles across the map and each aggregates the data beneath it live into a bar chart of data centers, networks, and internet exchange points.
 
 ## About
 
-This project maps where the internet's physical infrastructure — data centers and internet exchange points — actually sits, and asks a harder question: what does hosting that infrastructure cost the planet, and who is positioned to benefit from it? Every country in the dataset carries three angles, one per lens:
+In 2025, the world's data centers consumed an estimated 448 TWh of electricity — enough that if data centers were a country, they'd rank 11th globally. AI workloads alone accounted for roughly a fifth of that, projected to double by 2030. But the environmental cost of that electricity isn't uniform: it depends entirely on each country's electricity mix, and "low-carbon" doesn't automatically mean "low-water" or "low-land." This project pairs two views:
 
-| Lens | Measures | What it shows |
-|---|---|---|
-| **Infrastructure** | Data Centers, Networks, Exchanges | Digital infrastructure density |
-| **Resource Balance** | Footprint, Biocapacity, Balance | Whether the country consumes more than its land/sea can regenerate |
-| **Digital Economy** | GDP/Capita, Internet %, Mobile/100 | Economic capacity and connectivity adoption |
+| View | What it shows |
+|---|---|
+| **Infrastructure lens** (interactive) | Data centers, networks, and exchange points per country — drag up to 3 lenses to compare regions |
+| **Electricity footprint map** | Carbon/water/land footprint intensity of major data center hub countries, relative to the global average — quoted directly from UNU-INWEH (2026) |
 
 ## Data dictionary
+
+**Infrastructure lens:**
 
 | Label | Column | Description | Source |
 |---|---|---|---|
 | Data Centers | `data_centers` | Number of PeeringDB-registered data center facilities in the country | World Bank Data360 (PeeringDB) |
 | Networks | `total_networks` | Sum of networks (ASNs) present across all data center facilities in the country | PeeringDB API |
 | Exchanges | `total_ix` | Sum of internet exchange points present across all data center facilities in the country | PeeringDB API |
-| Footprint | `footprint_total_earths` | Per-capita ecological footprint — Earths needed if everyone consumed like this country's average resident | Global Footprint Network |
-| Biocapacity | `biocap_total_earths` | Per-capita biocapacity — Earths' worth of biologically productive land/sea provided per resident | Global Footprint Network (converted to per-capita "Earths") |
-| Balance | `ecological_balance_earths` | Biocapacity − Footprint. Positive = ecological reserve, negative = ecological deficit | Derived |
-| GDP/Capita | `gdp_per_capita_usd` | GDP per person, current US$ | World Bank WDI (`NY.GDP.PCAP.CD`) |
-| Internet % | `internet_users_pct` | Share of population using the internet | World Bank WDI (`IT.NET.USER.ZS`) |
-| Mobile/100 | `mobile_subs_per100` | Mobile cellular subscriptions per 100 people | World Bank WDI (`IT.CEL.SETS.P2`) |
 
-The full dataset ([`data/country_level_dataset.csv`](data/country_level_dataset.csv)) also carries population, urbanisation, and per-category footprint/biocapacity breakdowns not currently wired into a lens.
+The full dataset ([`data/country_level_dataset.csv`](data/country_level_dataset.csv)) also carries population, GDP per capita, internet/mobile adoption, and per-capita ecological footprint/biocapacity figures (Global Footprint Network) not currently wired into the map.
+
+**Electricity footprint map:** carbon, water, and land footprint intensities for ~16 major data center hub countries, tiered (well below average → well above average) from figures quoted directly in UNU-INWEH (2026), Section 2.6 and Figure 9 (p.34–37), with Brazil's carbon figure from p.26. The country list and figures are inlined in `index.html` — see the `HUBS` array.
 
 ## Repo structure
 
@@ -63,10 +60,11 @@ and `data/Biocapacity_Compare_Countries.csv`, exported from the Global Footprint
 
 ## Sources & credits
 
+- **[UNU-INWEH (2026), *Environmental Cost of AI's Energy Use: Carbon, Water and Land Footprints*](https://doi.org/10.53328/INR26RMA002)** — the foundational source: data center electricity demand and country-level carbon/water/land footprint intensities. Aczel M., Chamanara S., Matin M., Farsi A., Marwala T., Madani K. (2026), United Nations University Institute for Water, Environment and Health, doi: 10.53328/INR26RMA002
 - [World Bank Data360 — Interconnection Database (PeeringDB)](https://data360.worldbank.org/en/dataset/PEERING_DB) — data center counts per country
 - [PeeringDB](https://www.peeringdb.com/) — facility-level network/exchange counts, aggregated to country totals here
-- [World Bank World Development Indicators](https://data.worldbank.org/indicator) — GDP, internet use, mobile subscriptions, population, urbanisation
-- [Global Footprint Network](https://data.footprintnetwork.org/) — ecological footprint and biocapacity by country
+- [World Bank World Development Indicators](https://data.worldbank.org/indicator) — supplementary GDP, internet use, mobile subscriptions, population figures in the full dataset
+- [Global Footprint Network](https://data.footprintnetwork.org/) — supplementary ecological footprint and biocapacity figures in the full dataset
 - [mledoze/countries](https://github.com/mledoze/countries) — country ISO codes and centroids (MIT licensed)
 - [VisQuill Lens](https://visquill.com/) — the visualization engine
 

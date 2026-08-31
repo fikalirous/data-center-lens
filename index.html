@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The Cloud's Footprint — Data Centers, Ecology &amp; the Digital Economy</title>
-<meta name="description" content="An interactive map comparing the world's data center infrastructure against each nation's ecological footprint, biocapacity, and digital economy." />
+<title>The Cloud's Footprint — Data Centers and the Environmental Cost of AI</title>
+<meta name="description" content="An interactive map of the world's data center infrastructure, paired with the carbon, water, and land footprints of the electricity that powers it — grounded in UNU-INWEH's 2026 global assessment." />
 <style>
   :root {
     --bg: #f7f7f9;
@@ -16,6 +16,13 @@
     --accent-2: #e15759;
     --accent-3: #ff9800;
     --code-bg: #f0f0f4;
+    --tier-very-low: #1b7a3d;
+    --tier-low: #8bc34a;
+    --tier-high: #fb8c00;
+    --tier-very-high: #c62828;
+    --tier-no-data: #b0b0b8;
+    --map-water: #e9edf3;
+    --map-grid: #ccd2de;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -25,6 +32,8 @@
       --text-muted: #a5a5b8;
       --border: #303040;
       --code-bg: #24242f;
+      --map-water: #1b1e2a;
+      --map-grid: #33384a;
     }
   }
   * { box-sizing: border-box; }
@@ -49,7 +58,7 @@
   header.hero p.tagline {
     font-size: 1.15rem;
     color: var(--text-muted);
-    max-width: 640px;
+    max-width: 680px;
     margin: 0;
   }
   section { padding: 48px 0; border-bottom: 1px solid var(--border); }
@@ -61,6 +70,21 @@
   }
   h3 { font-size: 1.05rem; margin: 32px 0 8px; }
   p { color: var(--text-muted); max-width: 700px; }
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 24px 0 8px;
+  }
+  .stat-tile {
+    flex: 1 1 150px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .stat-tile .num { font-size: 1.4rem; font-weight: 700; color: var(--text); display: block; }
+  .stat-tile .lbl { font-size: 0.8rem; color: var(--text-muted); }
   .lens-legend {
     display: flex;
     gap: 24px;
@@ -76,8 +100,6 @@
   }
   .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
   .dot.l1 { background: var(--accent); }
-  .dot.l2 { background: var(--accent-2); }
-  .dot.l3 { background: var(--accent-3); }
 
   .embed-frame {
     width: 100%;
@@ -93,6 +115,41 @@
   .embed-actions { margin-top: 12px; display: flex; gap: 16px; font-size: 0.9rem; }
   .embed-actions a { color: var(--accent); text-decoration: none; }
   .embed-actions a:hover { text-decoration: underline; }
+
+  .metric-toggle { display: flex; gap: 8px; margin: 4px 0 20px; }
+  .metric-btn {
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .metric-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .footprint-map-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .footprint-map-card svg { width: 100%; height: auto; display: block; }
+  .fp-circle { stroke: rgba(0,0,0,0.25); stroke-width: 1; cursor: pointer; }
+  @media (prefers-color-scheme: dark) {
+    .fp-circle { stroke: rgba(255,255,255,0.25); }
+  }
+  .footprint-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 14px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+  .footprint-legend .swatch { display: inline-flex; align-items: center; gap: 6px; }
+  .footprint-legend .sw-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
 
   table {
     width: 100%;
@@ -119,6 +176,9 @@
     border-radius: 4px;
     font-size: 0.85em;
   }
+  #fp-table-wrap { overflow-x: auto; }
+  #fp-table td.tier-cell { font-weight: 600; }
+
   ul.sources { list-style: none; padding: 0; margin: 12px 0; }
   ul.sources li {
     padding: 10px 0;
@@ -129,6 +189,8 @@
   ul.sources a { color: var(--accent); text-decoration: none; font-weight: 500; }
   ul.sources a:hover { text-decoration: underline; }
   ul.sources .used-for { display: block; font-size: 0.85em; margin-top: 2px; }
+  ul.sources li.primary { font-size: 1.02rem; }
+  ul.sources li.primary a { font-size: 1.05rem; }
 
   footer { padding: 32px 0 64px; color: var(--text-muted); font-size: 0.85rem; }
   footer a { color: var(--text-muted); }
@@ -142,6 +204,14 @@
     color: var(--text-muted);
     margin-top: 16px;
   }
+  .spotlight {
+    border-left: 3px solid var(--accent-3);
+    padding: 4px 0 4px 16px;
+    margin: 20px 0;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+  }
+  .spotlight strong { color: var(--text); }
 </style>
 </head>
 <body>
@@ -149,7 +219,7 @@
 <header class="hero">
   <div class="wrap">
     <h1>The Cloud's Footprint</h1>
-    <p class="tagline">Mapping the world's data center infrastructure against each nation's ecological footprint, biocapacity, and digital economy.</p>
+    <p class="tagline">Mapping the world's data center infrastructure against the carbon, water, and land footprints of the electricity that powers it — grounded in UNU-INWEH's 2026 global assessment of AI's environmental cost.</p>
   </div>
 </header>
 
@@ -157,30 +227,35 @@
   <div class="wrap">
     <h2>About this project</h2>
     <p>
-      This project maps where the internet's physical infrastructure — data centers and internet exchange
-      points — actually sits, and asks a harder question: what does hosting that infrastructure cost the
-      planet, and who is positioned to benefit from it? Every country in this dataset carries three angles:
-      how much digital infrastructure it hosts, whether its ecological footprint outstrips what its own land
-      and sea can regenerate, and how developed its digital economy is. The interactive map below lets you
-      explore all three at once.
+      In 2025, the world's data centers consumed an estimated <strong>448 TWh</strong> of electricity — enough
+      that if data centers were a country, they'd rank 11th globally by electricity use. AI workloads alone
+      accounted for roughly a fifth of that, a share projected to double by 2030 as total data center demand
+      climbs toward 945 TWh. But the environmental cost of that electricity isn't uniform: a kilowatt-hour drawn
+      from a hydropower-heavy grid and one drawn from a coal-heavy grid carry very different carbon, water, and
+      land footprints — and "low-carbon" doesn't automatically mean "low-water" or "low-land." This project maps
+      where that infrastructure actually sits, and what powering it costs depending on where it's hosted.
     </p>
+    <div class="stat-row">
+      <div class="stat-tile"><span class="num">448 → 945 TWh</span><span class="lbl">Global data center electricity, 2025 → 2030 (projected)</span></div>
+      <div class="stat-tile"><span class="num">189M tonnes CO₂e</span><span class="lbl">Carbon footprint of 2025 data center electricity</span></div>
+      <div class="stat-tile"><span class="num">4.5 trillion L</span><span class="lbl">Water footprint of 2025 data center electricity</span></div>
+      <div class="stat-tile"><span class="num">32 countries</span><span class="lbl">Host AI-specialized data centers — 16% of the world</span></div>
+    </div>
     <h3>How it works</h3>
     <p>
-      Drag any of the three lens circles across the map. Each lens aggregates the data points beneath it
-      live into a bar chart. Overlap two or three lenses on the same region to compare all three angles for
-      one place at once.
+      Drag any of the three lens circles across the map. Each aggregates the data points beneath it live into a
+      bar chart of data centers, networks, and internet exchange points — drag two or three lenses onto
+      different regions to compare infrastructure density side by side.
     </p>
     <div class="lens-legend">
-      <span class="chip"><span class="dot l1"></span>Lens 1 — Infrastructure</span>
-      <span class="chip"><span class="dot l2"></span>Lens 2 — Resource Balance</span>
-      <span class="chip"><span class="dot l3"></span>Lens 3 — Digital Economy</span>
+      <span class="chip"><span class="dot l1"></span>Lenses A, B, C — Data Centers · Networks · Exchanges</span>
     </div>
   </div>
 </section>
 
 <section id="visual" style="padding-top: 32px; padding-bottom: 32px;">
   <div class="wrap-wide">
-    <h2>Explore the map</h2>
+    <h2>Explore the infrastructure map</h2>
     <div class="embed-frame">
       <iframe src="visual/index.html" title="The Cloud's Footprint — interactive visualization" loading="lazy"></iframe>
     </div>
@@ -190,13 +265,60 @@
   </div>
 </section>
 
+<section id="footprint-map">
+  <div class="wrap">
+    <h2>The electricity footprint of AI</h2>
+    <p>
+      Carbon, water, and land footprint intensities vary by an order of magnitude across the world's major data
+      center hubs, driven entirely by each country's electricity mix. Toggle between footprints below — the
+      colors show each country's footprint intensity for that dimension relative to the global average.
+    </p>
+    <div class="metric-toggle" role="group" aria-label="Footprint metric">
+      <button type="button" class="metric-btn active" data-metric="carbon">Carbon</button>
+      <button type="button" class="metric-btn" data-metric="water">Water</button>
+      <button type="button" class="metric-btn" data-metric="land">Land</button>
+    </div>
+    <div class="footprint-map-card">
+      <svg id="fp-svg" viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="footprint-legend">
+      <span class="swatch"><span class="sw-dot" style="background:var(--tier-very-low)"></span>Well below average</span>
+      <span class="swatch"><span class="sw-dot" style="background:var(--tier-low)"></span>Below average</span>
+      <span class="swatch"><span class="sw-dot" style="background:var(--tier-high)"></span>Above average</span>
+      <span class="swatch"><span class="sw-dot" style="background:var(--tier-very-high)"></span>Well above average</span>
+      <span class="swatch"><span class="sw-dot" style="background:var(--tier-no-data)"></span>Not reported for this metric</span>
+    </div>
+
+    <div class="spotlight">
+      <strong>Ireland: small country, outsized load.</strong> By 2023, data centers accounted for 21% of
+      Ireland's total metered electricity, up from 5% in 2015 — exceeding the combined electricity use of all
+      urban households. Dublin's grid operator paused new data center connection approvals in the region until
+      2028. <em>(UNU-INWEH, 2026, p.35)</em>
+    </div>
+
+    <div id="fp-table-wrap">
+      <table id="fp-table">
+        <caption>Footprint intensities for the countries shown above</caption>
+        <thead>
+          <tr><th>Country</th><th>Data Centers</th><th id="fp-table-metric-header">Carbon vs. global average</th></tr>
+        </thead>
+        <tbody><!-- filled by script --></tbody>
+      </table>
+    </div>
+    <div class="note">
+      Figures are quoted directly from UNU-INWEH's report (Section 2.6 and Figure 9, p.34–37, with Brazil's
+      carbon figure from p.26) and cover only the major data center hub countries the report gives explicit
+      footprint-intensity figures for — not all 250 countries in the infrastructure map above.
+    </div>
+  </div>
+</section>
+
 <section id="data-dictionary">
   <div class="wrap">
     <h2>Data dictionary</h2>
-    <p>What each lens measures, and where the numbers come from.</p>
+    <p>What the infrastructure lens measures, and where the numbers come from.</p>
 
     <table>
-      <caption><span class="dot l1"></span> Lens 1 — Infrastructure</caption>
       <thead>
         <tr><th>Label</th><th>Column</th><th>Description</th><th>Source</th></tr>
       </thead>
@@ -207,34 +329,10 @@
       </tbody>
     </table>
 
-    <table>
-      <caption><span class="dot l2"></span> Lens 2 — Resource Balance</caption>
-      <thead>
-        <tr><th>Label</th><th>Column</th><th>Description</th><th>Source</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Footprint</td><td class="col-name"><code>footprint_total_earths</code></td><td>Per-capita ecological footprint — how many Earths it would take if everyone consumed like this country's average resident.</td><td>Global Footprint Network</td></tr>
-        <tr><td>Biocapacity</td><td class="col-name"><code>biocap_total_earths</code></td><td>Per-capita biocapacity — how many Earths' worth of biologically productive land and sea the country provides per resident, expressed in the same unit as Footprint.</td><td>Global Footprint Network (converted to per-capita "Earths")</td></tr>
-        <tr><td>Balance</td><td class="col-name"><code>ecological_balance_earths</code></td><td>Biocapacity minus Footprint. Positive means the country regenerates more than it consumes (reserve); negative means it consumes more than it regenerates (deficit).</td><td>Derived</td></tr>
-      </tbody>
-    </table>
-
-    <table>
-      <caption><span class="dot l3"></span> Lens 3 — Digital Economy</caption>
-      <thead>
-        <tr><th>Label</th><th>Column</th><th>Description</th><th>Source</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>GDP/Capita</td><td class="col-name"><code>gdp_per_capita_usd</code></td><td>Gross domestic product per person, current US$.</td><td>World Bank (WDI, <code>NY.GDP.PCAP.CD</code>)</td></tr>
-        <tr><td>Internet %</td><td class="col-name"><code>internet_users_pct</code></td><td>Share of the population using the internet.</td><td>World Bank (WDI, <code>IT.NET.USER.ZS</code>)</td></tr>
-        <tr><td>Mobile/100</td><td class="col-name"><code>mobile_subs_per100</code></td><td>Mobile cellular subscriptions per 100 people.</td><td>World Bank (WDI, <code>IT.CEL.SETS.P2</code>)</td></tr>
-      </tbody>
-    </table>
-
     <div class="note">
-      The underlying dataset also carries population, urbanisation, and per-category footprint/biocapacity
-      breakdowns (cropland, grazing land, forest products, fishing grounds, built-up land) not currently
-      wired into a lens. Full file: <a href="data/country_level_dataset.csv">data/country_level_dataset.csv</a>.
+      The underlying dataset also carries population, GDP per capita, internet and mobile adoption, and
+      per-capita ecological footprint/biocapacity figures (Global Footprint Network) not currently wired into
+      the map. Full file: <a href="data/country_level_dataset.csv">data/country_level_dataset.csv</a>.
     </div>
   </div>
 </section>
@@ -243,6 +341,10 @@
   <div class="wrap">
     <h2>Sources &amp; credits</h2>
     <ul class="sources">
+      <li class="primary">
+        <a href="https://doi.org/10.53328/INR26RMA002" target="_blank" rel="noopener">Aczel M., Chamanara S., Matin M., Farsi A., Marwala T., Madani K. (2026). <em>Environmental Cost of AI's Energy Use: Carbon, Water and Land Footprints.</em> United Nations University Institute for Water, Environment and Health (UNU-INWEH).</a>
+        <span class="used-for">The foundational source for this project — data center electricity demand, and country-level carbon/water/land footprint intensities. doi: 10.53328/INR26RMA002</span>
+      </li>
       <li>
         <a href="https://data360.worldbank.org/en/dataset/PEERING_DB" target="_blank" rel="noopener">World Bank Data360 — Interconnection Database (PeeringDB)</a>
         <span class="used-for">Data center counts per country.</span>
@@ -253,11 +355,11 @@
       </li>
       <li>
         <a href="https://data.worldbank.org/indicator" target="_blank" rel="noopener">World Bank — World Development Indicators</a>
-        <span class="used-for">GDP per capita, internet use, mobile subscriptions, population, urbanisation.</span>
+        <span class="used-for">Supplementary GDP, internet use, mobile subscription, and population figures in the full dataset.</span>
       </li>
       <li>
         <a href="https://data.footprintnetwork.org/" target="_blank" rel="noopener">Global Footprint Network</a>
-        <span class="used-for">Ecological footprint (demand) and biocapacity (supply) by country.</span>
+        <span class="used-for">Supplementary per-capita ecological footprint and biocapacity figures in the full dataset.</span>
       </li>
       <li>
         <a href="https://github.com/mledoze/countries" target="_blank" rel="noopener">mledoze/countries</a>
@@ -265,7 +367,7 @@
       </li>
       <li>
         <a href="https://visquill.com/" target="_blank" rel="noopener">VisQuill Lens</a>
-        <span class="used-for">Interactive visualization engine used to build the map above.</span>
+        <span class="used-for">Interactive visualization engine used to build the infrastructure map above.</span>
       </li>
     </ul>
   </div>
@@ -273,9 +375,154 @@
 
 <footer>
   <div class="wrap">
-    <p>Built with <a href="https://visquill.com/" target="_blank" rel="noopener">VisQuill Lens</a>. Data center, ecological, and economic figures are aggregated country-level statistics from the sources above — see each source for its own terms of use.</p>
+    <p>Built with <a href="https://visquill.com/" target="_blank" rel="noopener">VisQuill Lens</a>. Infrastructure figures are aggregated country-level statistics; footprint figures are quoted from UNU-INWEH (2026) — see each source for its own terms of use.</p>
   </div>
 </footer>
+
+<script>
+(function () {
+  var TIER_COLOR = {
+    'very-low': 'var(--tier-very-low)',
+    'low': 'var(--tier-low)',
+    'high': 'var(--tier-high)',
+    'very-high': 'var(--tier-very-high)',
+    'no-data': 'var(--tier-no-data)'
+  };
+  var TIER_TEXT = {
+    'very-low': 'Well below average',
+    'low': 'Below average',
+    'high': 'Above average',
+    'very-high': 'Well above average',
+    'no-data': 'Not reported'
+  };
+
+  // Country-level electricity footprint intensities, relative to the global
+  // average, quoted from UNU-INWEH (2026) Section 2.6 / Figure 9 (p.34-37),
+  // with Brazil's carbon figure from p.26.
+  var HUBS = [
+    { name: "United States", lat: 38, lon: -97, dc: 1377,
+      carbon: { tier: 'low', label: '−18% vs global average' },
+      water: { tier: 'low', label: '43–66% below global average (with Hong Kong SAR, Australia, Singapore)' },
+      land: { tier: 'very-low', label: 'Among the lowest — a fraction of the global average (with Hong Kong SAR)' } },
+    { name: "Mainland China", lat: 35, lon: 105, dc: 41,
+      carbon: { tier: 'high', label: '+21% vs global average' } },
+    { name: "Germany", lat: 51, lon: 9, dc: 330,
+      carbon: { tier: 'low', label: '−24% vs global average' },
+      land: { tier: 'high', label: '2–4× global average' } },
+    { name: "United Kingdom", lat: 54, lon: -2, dc: 246,
+      land: { tier: 'very-high', label: 'More than 4× global average — the highest among major hubs' } },
+    { name: "France", lat: 46, lon: 2, dc: 221,
+      carbon: { tier: 'very-low', label: '37 g CO₂e/kWh — about 88–91% below global average' } },
+    { name: "Canada", lat: 60, lon: -95, dc: 162,
+      water: { tier: 'high', label: 'More than double the global average' } },
+    { name: "Australia", lat: -27, lon: 133, dc: 161,
+      water: { tier: 'low', label: '43–66% below global average' } },
+    { name: "India", lat: 20, lon: 77, dc: 235,
+      carbon: { tier: 'very-high', label: '+51% vs global average' } },
+    { name: "Italy", lat: 42.83, lon: 12.83, dc: 102,
+      carbon: { tier: 'low', label: '−32% vs global average' },
+      land: { tier: 'high', label: '2–4× global average' } },
+    { name: "Brazil", lat: -10, lon: -55, dc: 347,
+      carbon: { tier: 'very-low', label: '−77% vs global average (hydropower-dominated grid)' },
+      water: { tier: 'very-high', label: '+191% vs global average — the highest among major hubs' },
+      land: { tier: 'high', label: '2–4× global average' } },
+    { name: "Indonesia", lat: -5, lon: 120, dc: 198,
+      carbon: { tier: 'very-high', label: '+62% vs global average — the highest among major hubs' } },
+    { name: "Switzerland", lat: 47, lon: 8, dc: 78,
+      carbon: { tier: 'very-low', label: '37 g CO₂e/kWh — about 88–91% below global average' },
+      water: { tier: 'high', label: 'More than double the global average' } },
+    { name: "Sweden", lat: 62, lon: 15, dc: 57,
+      carbon: { tier: 'very-low', label: '37 g CO₂e/kWh — about 88–91% below global average' },
+      water: { tier: 'high', label: '+110% vs global average' },
+      land: { tier: 'high', label: '2–4× global average' } },
+    { name: "Hong Kong SAR", lat: 22.267, lon: 114.188, dc: 55,
+      carbon: { tier: 'high', label: '+43% vs global average' },
+      water: { tier: 'low', label: '43–66% below global average' },
+      land: { tier: 'very-low', label: 'Among the lowest — a fraction of the global average' } },
+    { name: "Poland", lat: 52, lon: 20, dc: 80,
+      carbon: { tier: 'high', label: '+30% vs global average' } },
+    { name: "Singapore", lat: 1.367, lon: 103.8, dc: 46,
+      water: { tier: 'low', label: '43–66% below global average' } }
+  ];
+
+  var LAT_MIN = -58, LAT_MAX = 80, W = 1000, H = 420;
+  function project(lat, lon) {
+    var x = (lon + 180) / 360 * W;
+    var y = (LAT_MAX - lat) / (LAT_MAX - LAT_MIN) * H;
+    return [x, y];
+  }
+  function radiusFor(dc) {
+    var r = Math.sqrt(dc) * 0.6;
+    return Math.max(6, Math.min(18, r));
+  }
+
+  var svg = document.getElementById('fp-svg');
+  var svgns = 'http://www.w3.org/2000/svg';
+
+  function el(tag, attrs) {
+    var e = document.createElementNS(svgns, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  // background + graticule
+  svg.appendChild(el('rect', { x: 0, y: 0, width: W, height: H, fill: 'var(--map-water)', rx: 6 }));
+  for (var lon = -180; lon <= 180; lon += 30) {
+    var x0 = project(0, lon)[0];
+    svg.appendChild(el('line', { x1: x0, y1: 0, x2: x0, y2: H, stroke: 'var(--map-grid)', 'stroke-width': 1 }));
+  }
+  for (var lat = -60; lat <= 90; lat += 30) {
+    if (lat < LAT_MIN || lat > LAT_MAX) continue;
+    var y0 = project(lat, 0)[1];
+    svg.appendChild(el('line', { x1: 0, y1: y0, x2: W, y2: y0, stroke: 'var(--map-grid)', 'stroke-width': 1 }));
+  }
+
+  var circles = HUBS.map(function (hub) {
+    var p = project(hub.lat, hub.lon);
+    var c = el('circle', { cx: p[0], cy: p[1], r: radiusFor(hub.dc), class: 'fp-circle' });
+    var title = el('title', {});
+    c.appendChild(title);
+    svg.appendChild(c);
+    return { hub: hub, circle: c, title: title };
+  });
+
+  var tbody = document.querySelector('#fp-table tbody');
+  var tableHeader = document.getElementById('fp-table-metric-header');
+  var METRIC_LABEL = { carbon: 'Carbon vs. global average', water: 'Water vs. global average', land: 'Land vs. global average' };
+
+  function render(metric) {
+    circles.forEach(function (item) {
+      var m = item.hub[metric];
+      var tier = m ? m.tier : 'no-data';
+      item.circle.setAttribute('fill', TIER_COLOR[tier]);
+      var label = m ? m.label : 'Not reported for this metric';
+      item.title.textContent = item.hub.name + ' — ' + label;
+    });
+
+    tableHeader.textContent = METRIC_LABEL[metric];
+    tbody.innerHTML = '';
+    HUBS.slice().sort(function (a, b) { return b.dc - a.dc; }).forEach(function (hub) {
+      var m = hub[metric];
+      var tier = m ? m.tier : 'no-data';
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + hub.name + '</td>' +
+        '<td>' + hub.dc.toLocaleString() + '</td>' +
+        '<td class="tier-cell" style="color:' + TIER_COLOR[tier] + '">' + (m ? m.label : 'Not reported') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.querySelectorAll('.metric-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.metric-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      render(btn.getAttribute('data-metric'));
+    });
+  });
+
+  render('carbon');
+})();
+</script>
 
 </body>
 </html>
