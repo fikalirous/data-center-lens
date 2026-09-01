@@ -104,6 +104,8 @@
   }
   .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
   .dot.l1 { background: var(--accent); }
+  .dot.l2 { background: #f44336; }
+  .dot.l3 { background: #4caf50; }
 
   .embed-frame {
     width: 100%;
@@ -329,12 +331,13 @@
     </div>
     <h3>How it works</h3>
     <p>
-      Drag the lens circle across the map. It aggregates the data points beneath it live into a bar chart of
-      data centers, networks, and internet exchange points — move it between regions to compare infrastructure
-      density.
+      Drag any of the three lenses across the map. Each aggregates one metric for the data points beneath it —
+      move them between regions to compare data centers, networks, and exchange points side by side.
     </p>
     <div class="lens-legend">
-      <span class="chip"><span class="dot l1"></span>Infrastructure lens — Data Centers · Networks · Exchanges</span>
+      <span class="chip"><span class="dot l1"></span>Data Centers</span>
+      <span class="chip"><span class="dot l2"></span>Networks</span>
+      <span class="chip"><span class="dot l3"></span>Exchanges</span>
     </div>
   </div>
   

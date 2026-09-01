@@ -2,6 +2,10 @@
   "map": {
     "tileUrl": "https://tiles.openfreemap.org/styles/liberty",
     "attribution": "© OpenFreeMap © OpenStreetMap contributors",
-    "home": null
+    "home": {
+      "lat": 26.948257102043527,
+      "lng": 47.28132615827167,
+      "zoom": 2
+    }
   }
 }

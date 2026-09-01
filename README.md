@@ -4,7 +4,7 @@ Mapping the world's data center infrastructure against the carbon, water, and la
 
 **[Open the live site →](https://fikalirous.github.io/data-center-lens/)**
 
-Built with [VisQuill Lens](https://visquill.com/) — drag the lens across the map and it aggregates the data beneath it live into a bar chart of data centers, networks, and internet exchange points.
+Built with [VisQuill Lens](https://visquill.com/) — drag any of the three lenses across the map; each aggregates one metric (data centers, networks, or internet exchange points) for the data beneath it.
 
 ## About
 
