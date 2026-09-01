@@ -1,6 +1,6 @@
 # The Cloud's Footprint
 
-Mapping the world's data center infrastructure against the carbon, water, and land footprints of the electricity that powers it — grounded in [UNU-INWEH's 2026 global assessment of AI's environmental cost](https://doi.org/10.53328/INR26RMA002).
+Mapping the world's data center infrastructure against the carbon, water, and land footprints of the electricity. Based on the [UNU-INWEH's 2026 global assessment of AI's environmental cost](https://doi.org/10.53328/INR26RMA002).
 
 **[Open the live site →](https://fikalirous.github.io/data-center-lens/)**
 
@@ -8,7 +8,7 @@ Built with [VisQuill Lens](https://visquill.com/) — drag any of the three lens
 
 ## About
 
-In 2025, the world's data centers consumed an estimated 448 TWh of electricity — enough that if data centers were a country, they'd rank 11th globally. AI workloads alone accounted for roughly a fifth of that, projected to double by 2030. But the environmental cost of that electricity isn't uniform: it depends entirely on each country's electricity mix, and "low-carbon" doesn't automatically mean "low-water" or "low-land." This project pairs two views:
+In 2025, the world's data centers consumed an estimated 448 TWh of electricity, if data centers were a country, they'd rank 11th globally. AI workloads alone accounted for roughly a fifth of that, projected to double by 2030. But the environmental cost of that electricity isn't uniform: it depends entirely on each country's electricity mix, and "low-carbon" doesn't automatically mean "low-water" or "low-land." This project pairs two views:
 
 ## Data dictionary
 
